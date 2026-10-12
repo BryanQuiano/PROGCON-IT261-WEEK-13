@@ -1,6 +1,4 @@
-
 def __init__(self):
-    # Using index 1 to 9 for user-friendly 1-9 mapping
     self.board = [" "] * 10
     self.current_player = random.choice(["O", "X"])
 
@@ -14,7 +12,6 @@ def __init__(self):
     print()
 
   def check_winner(self):
-    # Winning combinations using tuple coordinates
     winning_combinations = [
         (1, 2, 3),
         (4, 5, 6),
@@ -33,14 +30,12 @@ def __init__(self):
       ):
         return self.board[a]
 
-    # Check for draw (if no empty spaces left from index 1 to 9)
     if " " not in self.board[1:]:
       return "Draw"
 
     return None
 
   def get_computer_move(self):
-    # List comprehension to find all available empty spots
     available_spots = [i for i, spot in enumerate(self.board[1:], 1) if spot == " "]
     return random.choice(available_spots)
 
@@ -63,7 +58,6 @@ def __init__(self):
         break
 
       if self.current_player == "O":
-        # Human Turn
         try:
           move = int(input("Enter your move (1-9): "))
           if 1 <= move <= 9:
@@ -77,7 +71,6 @@ def __init__(self):
         except ValueError:
           print("Invalid input! Please enter a number.")
       else:
-        # Computer Turn
         print("Computer's turn...")
         move = self.get_computer_move()
         self.board[move] = "X"
