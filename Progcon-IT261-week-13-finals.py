@@ -1,102 +1,89 @@
 
-def display_board(board):
-  print(f"{board[1]} | {board[2]} | {board[3]}")
-  print("-+-+-")
-  print(f"{board[4]} | {board[5]} | {board[6]}")
-  print("-+-+-")
-  print(f"{board[7]} | {board[8]} | {board[9]}")
+def __init__(self):
+    # Using index 1 to 9 for user-friendly 1-9 mapping
+    self.board = [" "] * 10
+    self.current_player = random.choice(["O", "X"])
 
+  def display_board(self):
+    print()
+    print(f" {self.board[1]} | {self.board[2]} | {self.board[3]} ")
+    print("---+---+---")
+    print(f" {self.board[4]} | {self.board[5]} | {self.board[6]} ")
+    print("---+---+---")
+    print(f" {self.board[7]} | {self.board[8]} | {self.board[9]} ")
+    print()
 
-def check_winner(board):
-  result = "None"
-  filled_count = 0
+  def check_winner(self):
+    # Winning combinations using tuple coordinates
+    winning_combinations = [
+        (1, 2, 3),
+        (4, 5, 6),
+        (7, 8, 9),  # Rows
+        (1, 4, 7),
+        (2, 5, 8),
+        (3, 6, 9),  # Columns
+        (1, 5, 9),
+        (3, 5, 7),  # Diagonals
+    ]
 
-  if board[1] != " " and board[1] == board[2] and board[2] == board[3]:
-    result = board[1]
-  elif board[4] != " " and board[4] == board[5] and board[5] == board[6]:
-    result = board[4]
-  elif board[7] != " " and board[7] == board[8] and board[8] == board[9]:
-    result = board[7]
-  elif board[1] != " " and board[1] == board[4] and board[4] == board[7]:
-    result = board[1]
-  elif board[2] != " " and board[2] == board[5] and board[5] == board[8]:
-    result = board[2]
-  elif board[3] != " " and board[3] == board[6] and board[6] == board[9]:
-    result = board[3]
-  elif board[1] != " " and board[1] == board[5] and board[5] == board[9]:
-    result = board[1]
-  elif board[3] != " " and board[3] == board[5] and board[5] == board[7]:
-    result = board[3]
+    for a, b, c in winning_combinations:
+      if (
+          self.board[a] == self.board[b] == self.board[c]
+          and self.board[a] != " "
+      ):
+        return self.board[a]
 
-  for k in range(1, 10):
-    if board[k] != " ":
-      filled_count += 1
+    # Check for draw (if no empty spaces left from index 1 to 9)
+    if " " not in self.board[1:]:
+      return "Draw"
 
-  if result == "None" and filled_count == 9:
-    result = "Draw"
+    return None
 
-  return result
+  def get_computer_move(self):
+    # List comprehension to find all available empty spots
+    available_spots = [i for i, spot in enumerate(self.board[1:], 1) if spot == " "]
+    return random.choice(available_spots)
 
+  def play(self):
+    print("--- Welcome to Tic-Tac-Toe! ---")
+    print("You are 'O' and the Computer is 'X'.")
+    print(f"Random draw: '{self.current_player}' goes first!\n")
 
-def get_computer_move(board):
-  valid = False
-  while not valid:
-    comp_move = random.randint(1, 9)
-    if board[comp_move] == " ":
-      valid = True
-  return comp_move
+    while True:
+      self.display_board()
+      winner = self.check_winner()
 
+      if winner:
+        if winner == "Draw":
+          print("It's a draw!")
+        elif winner == "O":
+          print("You win!")
+        else:
+          print("Computer wins!")
+        break
 
-def main():
-  board = [""] * 10
-  for i in range(1, 10):
-    board[i] = " "
-
-  game_over = False
-  winner = "None"
-  r = random.randint(0, 1)
-
-  current_player = "O" if r == 0 else "X"
-
-  while not game_over:
-    display_board(board)
-
-    if current_player == "O":
-      valid_move = False
-      while not valid_move:
+      if self.current_player == "O":
+        # Human Turn
         try:
-          human_move = int(input("Enter your move (1-9): "))
-          if 1 <= human_move <= 9:
-            if board[human_move] == " ":
-              valid_move = True
+          move = int(input("Enter your move (1-9): "))
+          if 1 <= move <= 9:
+            if self.board[move] == " ":
+              self.board[move] = "O"
+              self.current_player = "X"
             else:
               print("Space occupied! Try again.")
           else:
-            print("Invalid choice! Enter 1-9.")
+            print("Invalid choice! Enter a number between 1 and 9.")
         except ValueError:
-          print("Invalid input! Please enter a number between 1 and 9.")
-      board[human_move] = "O"
-    else:
-      print("Computer's turn...")
-      comp_choice = get_computer_move(board)
-      board[comp_choice] = "X"
-
-    winner = check_winner(board)
-
-    if winner != "None":
-      game_over = True
-    else:
-      current_player = "X" if current_player == "O" else "O"
-
-  display_board(board)
-
-  if winner == "O":
-    print("You win!")
-  elif winner == "X":
-    print("Computer wins!")
-  else:
-    print("It's a draw!")
+          print("Invalid input! Please enter a number.")
+      else:
+        # Computer Turn
+        print("Computer's turn...")
+        move = self.get_computer_move()
+        self.board[move] = "X"
+        self.current_player = "O"
 
 
 if __name__ == "__main__":
-  main()
+  game = TicTacToe()
+  game.play()
